@@ -70,6 +70,9 @@ void createNode_middle(List * cur_position){
 
     if(cur_position->next != NULL){
         List * node = malloc(sizeof(List));
+        if(node == NULL){
+            printf("malloc failes: createNode_middle\n");
+        }
         node->next = cur_position->next;
         cur_position->next = node;
     }
