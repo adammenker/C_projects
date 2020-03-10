@@ -133,7 +133,7 @@ void printList(List * head){
 }
 
 
-void createNode_middle(List * cur_position){
+void createNode_middle(List * cur_position){ //try to implement with int value for position instead of pointer
 
     if(cur_position->next != NULL){
         List * node = malloc(sizeof(List));
