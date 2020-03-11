@@ -95,6 +95,12 @@ int insertAtTail(int k, List *list){
 }
 
 
+// while ((curr = head) != NULL) { // set curr to head, stop if list empty.
+//     head = head->next;          // advance head to next element.
+//     free (curr);                // delete saved pointer.
+// }
+
+
 void freeList(List ** head){
     freeSupport(*head);
     (*head)->next = NULL;
