@@ -16,34 +16,66 @@ int insertAtTail(int data, List * head);
 List * copyList(List * copied);
 
 void printList(List * head);
+List * createNode(void);
 
 
 int main(void){ 
     List * linkedList;
     linkedList = createList();
 
-    printList(linkedList);
+    // below tests insertAtHead(), insertAtTail(), copyList(), and getListLength()       ** as well as printList() and createNode()
+    // printList(linkedList);
 
-    int checkHead = insertAtHead(4, linkedList);
-    insertAtHead(3, linkedList);
-    insertAtHead(2, linkedList);
-    //printf("%d\n", checkHead);
-    printList(linkedList);
-    int length = getListLength(linkedList);
-    printf("%d\n", length);
+    // int checkHead = insertAtHead(4, linkedList);
+    // insertAtHead(3, linkedList);
+    // insertAtHead(2, linkedList);
+    // printList(linkedList);
 
-    int checkTail = insertAtTail(5, linkedList);
-    //printf("%d\n", checkTail);
-    printList(linkedList);
+    // int length = getListLength(linkedList);
+    // printf("%d\n", length);
 
-    length = getListLength(linkedList);
-    printf("%d\n", length);
+    // int checkTail = insertAtTail(5, linkedList);
+    // printList(linkedList);
+
+    // length = getListLength(linkedList);
+    // printf("%d\n", length);
+
+    // List * copy;
+    // copy = copyList(linkedList);
+    // printList(copy);
+
+    // length = getListLength(copy);
+    // printf("%d\n", length);
+
+    // insertAtHead(1, copy);
+    // printList(copy);
+
+    // length = getListLength(copy);
+    // printf("%d\n", length);
+
+
+    //******** division *********
+
+
+    //below tests freeList()
+    // insertAtHead(3, linkedList);
+    // insertAtHead(2, linkedList);
+    // printList(linkedList);
+    // List * copy1 = copyList(linkedList);
+    // freeList(linkedList);
+    // //printList(linkedList);
+    // printList(copy1);
+    // freeList(copy1);
+    // //printList(copy1);
 
 }
 
 
 List * createList(){ // implemented with a dummy node
     List * temp = (List *) malloc(sizeof(List));
+    if(temp == NULL){
+        printf("malloc failed");
+    }
     temp->data = 0;
     temp->next = NULL;
     return temp;
@@ -83,7 +115,10 @@ int insertAtHead(int data, List * head){
 
 
 int insertAtTail(int data, List * head){
-    List * newTail = (List *) malloc(sizeof(List)); 
+    List * newTail = (List *) malloc(sizeof(List));
+    if(newTail == NULL){
+        printf("malloc failed");
+    } 
     List * temp;
     temp = head;
     while(temp->next != NULL){
@@ -103,5 +138,40 @@ int insertAtTail(int data, List * head){
 
 
 List * copyList(List * copied){
-    return 0;
+    int size = copied->data;
+    List * currentNode = copied;
+    
+
+    List * newHead = createList();
+    List * copy = newHead;
+    copy->data = size;
+
+    for(int i = 0; i < size; i++){
+        copy->next = createNode();
+        copy = copy->next;
+        currentNode = currentNode->next;
+        copy->data = currentNode->data;      
+    }
+    return newHead;
+}
+
+
+List * createNode(void){
+    List * newNode = (List *) malloc(sizeof(List));
+    if(newNode == NULL){
+        printf("malloc failed");
+    }
+    newNode->next = NULL;
+
+    return newNode;
+}
+
+
+void freeList(List * head){
+    List * temp;
+    while(head != NULL){
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
 }
