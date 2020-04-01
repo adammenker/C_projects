@@ -159,8 +159,6 @@ void emptyList(Student* head){
 // frees all items on list
 // no output
 void freeList(Student * head){
-
-
     Student * temp;
     while(head != NULL){ // loops through entire list
         temp = head; // sets temp to same address as head
