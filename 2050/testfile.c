@@ -1,52 +1,127 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void * createtable(int rowSize, int columnSize, int elementSize);
+typedef struct Employee{
+    int key;
+    struct Employee* next;
+    struct Employee* prev;
+} Employee;
+
+typedef struct QueueInformation{
+    Employee* head;
+    Employee* tail;
+} QueueInfo;
+
+typedef struct QueueStruct{
+    struct QueueInformation* infoPtr;
+} Queue;
+
+
+Queue initQueue();  // Return empty queue
+int enqueue(Employee*, Queue); // enqueue returns an int error code
+Employee*dequeue(Queue); 
+int getQsize(Queue); // returns # of items in queue
+void freeQueue(Queue); // Free all malloced space
+
+void printForward(Queue queue);
+void printBackward(Queue queue);
+
 
 int main(void){
 
-    int **t;
-    t = createtable(10, 5, sizeof(int));
-    printf("%d\n", t[0][0]);
+    Queue myQ;
+    myQ = initQueue();
 
-    int p = 0;
-    for(int i = 0; i < 10; i++){
-        for(int x = 0; x < 5; x++){
-            t[i][x] = p;
-            p++;
-            //printf("t[%d][%d] = %d\n",i, x, p);
-        }
+    Employee* node = malloc(sizeof(Employee));
+    node->key = 1;
+    node->next = NULL;
+    node->prev = NULL;
+
+    Employee* node2 = malloc(sizeof(Employee));
+    node2->key = 2;
+    node2->next = NULL;
+    node2->prev = NULL;
+
+    Employee* node3 = malloc(sizeof(Employee));
+    node3->key = 3;
+    node3->next = NULL;
+    node3->prev = NULL;
+
+
+    int test = enqueue(node, myQ);
+    enqueue(node2, myQ);
+    enqueue(node3, myQ);
+    printf("test = %d\n", test);
+    printForward(myQ);
+    printf("\n\n");
+    printBackward(myQ);
+
+
+}
+
+
+Queue initQueue(){
+    Queue Q;
+    Q.infoPtr = malloc(sizeof(QueueInfo));
+
+    Q.infoPtr->head = NULL;
+    Q.infoPtr->tail = NULL;
+
+    return Q;
+}
+
+
+int enqueue(Employee* newNode, Queue Q){
+    Employee* temp;
+
+    if(Q.infoPtr == NULL){
+        printf("error: queue is not initialized, failed in enqueue()");
+        return 0;
     }
-    
-}
 
-void * createtable(int rowSize, int columnSize, int elementSize){
-    
-    int i;
-    int sizeofpointer = 8; //pointers take up 8 bytes on 64-bit memory
-    void ** rows = malloc(sizeofpointer * rowSize + 2 * sizeof(int));
-    *(int*)rows = rowSize;
-    rows++;
-    *(int*)rows = columnSize;
-    rows++;
-    printf("%d %d\n", (int)rows[-2], (int)rows[-1]);
-    for(i = 0; i < rowSize; i++){
-        rows[i] = malloc(columnSize * elementSize);
+    temp = Q.infoPtr->head;
+
+    if(temp == NULL){
+        newNode->next = temp;
+        Q.infoPtr->head = newNode;
+        return 1;
     }
-    printf("%d %d\n", (int)rows[-2], (int)rows[-1]);
+
+    newNode->next = temp;
+    temp->prev = newNode;
     
-    
-    return rows;
+    Q.infoPtr->head = newNode;
+    return 1;
 }
 
 
-int getRowSize(void *array){
-    int s = ((int *) array)[-1];
-    return s;
+
+
+
+
+
+
+
+
+
+
+void printForward(Queue queue){
+    Employee* temp = queue.infoPtr->head;
+
+    while(temp != NULL){
+        printf("%d --> ", temp->key);
+        temp = temp->next;
+    }
+    printf("NULL");
 }
 
 
-int getColSize(void *array){
-    int s = ((int *) array)[-1];
-    return s;
+void printBackward(Queue queue){
+    Employee* temp = queue.infoPtr->tail;
+
+    while(temp != NULL){
+        printf("%d --> ", temp->key);
+        temp = temp->prev;
+    }
+    printf("NULL");
 }

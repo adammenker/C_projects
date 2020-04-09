@@ -66,6 +66,10 @@ int main(void){
 Queue initQueue(){
     Queue q;
     q.ptr = malloc(sizeof(accessor));
+    if(!q.ptr){
+        printf("malloc failed, returning Queue with NULL accessor\n");
+        return q;
+    }
 
     q.ptr->head = NULL;
     q.ptr->tail = NULL;
@@ -76,17 +80,18 @@ Queue initQueue(){
 
 
 int enqueue(Employee* node, Queue queue){
-    Employee* temp;
     if(queue.ptr == NULL){
         printf("error: queue is not initialized, failed in enqueue()");
         return 0;
     }
+
+    Employee* temp;
     temp = queue.ptr->head;
 
     if(queue.ptr->size == 1){
         queue.ptr->tail = temp;
     }
-    if(queue.ptr->size > 0){
+    if(queue.ptr->size >= 1){ // so as to not try to assign NULL to a node
         queue.ptr->head->prevptr = node;
     }
 
@@ -100,6 +105,11 @@ int enqueue(Employee* node, Queue queue){
 
 
 Employee* dequeue(Queue queue){
+    if(queue.ptr == NULL){
+        printf("error: queue is not initialized, failed in enqueue(), returning NULL ptr\nn");
+        return NULL;
+    }
+
     Employee* temp = queue.ptr->tail;
     queue.ptr->tail = queue.ptr->tail->prevptr;
     queue.ptr->tail->nextptr = NULL;
