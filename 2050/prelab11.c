@@ -60,6 +60,9 @@ int main(void){
     
     printf("\n\nsize: %d\n", getQsize(z));
 
+    // freeQueue(z);
+    // printBackward(z);
+
 }
 
 
