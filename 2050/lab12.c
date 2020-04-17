@@ -30,26 +30,26 @@ void printPQueue(PQueue);
 void freePQueue(PQueue); // Free all malloced spacevoid printPQueue(PQueue);
 
 // // testing function for my own reference
-// int main(void){
+int main(void){
 
-//     PQueue myPQ = initPQueue();
-//     insertPQ(4.368, 18, myPQ);
-//     insertPQ(5.111, 19, myPQ);
-//     insertPQ(6.111, 21, myPQ);
-//     insertPQ(5.411, 20, myPQ);
-//     insertPQ(3.411, 17, myPQ);
-//     printPQueue(myPQ);
-//     Student* test = returnMax(myPQ);
-//     deleteMin(myPQ);
-//     deleteMax(myPQ);
-//     deleteMin(myPQ);
-//     Student* test2 = returnMin(myPQ);
-//     printf("%f-%d --> %f-%d\n\n", test->priority, test->age, test2->priority, test2->age);
-//     printPQueue(myPQ);
+    PQueue myPQ = initPQueue();
+    insertPQ(4.368, 18, myPQ);
+    insertPQ(5.111, 19, myPQ);
+    insertPQ(6.111, 21, myPQ);
+    insertPQ(5.411, 20, myPQ);
+    insertPQ(3.411, 17, myPQ);
+    printPQueue(myPQ);
+    Student* test = returnMax(myPQ);
+    deleteMin(myPQ);
+    deleteMax(myPQ);
+    deleteMin(myPQ);
+    Student* test2 = returnMin(myPQ);
+    printf("%f-%d --> %f-%d\n\n", test->priority, test->age, test2->priority, test2->age);
+    printPQueue(myPQ);
 
-//     freePQueue(myPQ);
-//     printPQueue(myPQ);
-// }
+    freePQueue(myPQ);
+    printPQueue(myPQ);
+}
 
 
 // *************************************** Function definitions below this line ***************************************
