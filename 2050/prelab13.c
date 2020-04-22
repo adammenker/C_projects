@@ -10,7 +10,10 @@ int main(void){
     int testArr[] = {1, 5, 35, 55, 67, 89, 99, 123, 234, 345, 576};
     int n = 11;
 
-    int val = binarySearch(testArr, 0, n-1, 123);
+    int val = binarySearch(testArr, 0, n-1, 580);
+    if(val == -1){
+        printf("\ndid not find query\n\n");
+    }
 }
 
 
