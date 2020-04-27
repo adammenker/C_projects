@@ -17,8 +17,12 @@ empDatabase createSearchableEmployeeDB(Employee**, int);
 Employee* findEmpBySSN(int, empDatabase);
 Employee* findEmpByID(int, empDatabase);
 void freeEmpDatabase(empDatabase);
+
 void merge(Employee** arr, int l, int m, int r, int check);
 void mergeSort(empDatabase database, Employee** array, int first, int last, int check);
+int compare(Employee* employeePtr, int comparisonValue, int check);
+Employee* binarySearch(Employee** array, int key, int first, int last, int check);
+void printfDB(Employee** array);
 
 
 int main(void){
@@ -51,27 +55,30 @@ int main(void){
     userArray[3] = &emp6;
     userArray[4] = &emp3;
     userArray[5] = &emp1;
+
     printf("\n*************** random sort ***************\n");
-    for(int i = 0; i < 6; i++){
-        printf("employee: %d --> id: %d, ssn: %d\n", i + 1, userArray[i]->ID, userArray[i]->SSN);
-    }
+    printfDB(userArray);
     printf("*******************************************\n\n");
 
     // testing data above, functionality testing below
 
     empDatabase myDatabase = createSearchableEmployeeDB(userArray, 6);
+
     printf("*************** sorted by ID **************\n");
-    for(int i = 0; i < 6; i++){
-        printf("** employee: %d --> id: %d, ssn: %d\n", i + 1, myDatabase.databaseByID[i]->ID, myDatabase.databaseByID[i]->SSN);
-    }
+    printfDB(myDatabase.databaseByID);
     printf("*******************************************\n\n");
 
     printf("*************** sorted by SSN **************\n");
-    for(int i = 0; i < 6; i++){
-        printf("** employee: %d --> id: %d, ssn: %d\n", i + 1, myDatabase.databaseBySSN[i]->ID, myDatabase.databaseBySSN[i]->SSN);
-    }
+    printfDB(myDatabase.databaseBySSN);
     printf("*******************************************\n");
 
+    Employee* mytemp = findEmpByID(3, myDatabase);
+    // printf("%d %d\n", mytemp->ID, mytemp->SSN);
+    mytemp = findEmpBySSN(31, myDatabase);
+    // printf("%d %d\n", mytemp->ID, mytemp->SSN);
+    
+    freeEmpDatabase(myDatabase);
+    printfDB(myDatabase.databaseByID);
 }
 
 
@@ -91,20 +98,28 @@ empDatabase createSearchableEmployeeDB(Employee** array, int size){
 
 
 Employee* findEmpBySSN(int ssn, empDatabase database){
-    
     // binary searches for ssn and returns matching struct
-    return NULL;
+    Employee* temp;
+    temp = binarySearch(database.databaseBySSN, ssn, 0, 6, 1);
+    return temp;
 }
 
 
 Employee* findEmpByID(int id, empDatabase database){
     // binary searches for id and returns matching struct
-    return NULL;
+    Employee* temp;
+    temp = binarySearch(database.databaseByID, id, 0, 6, -1);
+    // printf("\n%d %d\n", temp->ID, temp->SSN);
+    return temp;
 }
 
 
 void freeEmpDatabase(empDatabase database){
     // loops through ptrs of database and frees them all then frees databse ptr
+    free(database.databaseByID);
+    free(database.databaseBySSN);
+    database.databaseByID = NULL;
+    database.databaseBySSN = NULL;
 }
 
 
@@ -199,3 +214,59 @@ void merge(Employee** array, int first, int mid, int last, int check){
         k++; 
     } 
 } 
+
+
+int compare(Employee* employeePtr, int comparisonValue, int check){
+    // printf("comparing %d and %d\n", employeePtr->ID, comparisonValue);
+    if(check == -1){
+        if(employeePtr->ID > comparisonValue){
+            return -1;
+        }
+        else if(employeePtr->ID < comparisonValue){
+            return 1;
+        }
+        else if(employeePtr->ID == comparisonValue){
+            return 0;
+        }
+    }
+    else if(check == 1){
+        if(employeePtr->SSN > comparisonValue){
+            return -1;
+        }
+        else if(employeePtr->SSN < comparisonValue){
+            return 1;
+        }
+        else if(employeePtr->SSN == comparisonValue){
+            return 0;
+        }
+    }
+    return 2; //fail
+}
+
+
+Employee* binarySearch(Employee** array, int key, int first, int last, int check){
+    int mid = (first + last) / 2;
+    if(last >= first){
+        if(compare(array[mid], key, check) == -1){
+            last = mid - 1;
+            return binarySearch(array, key, first, last, check);
+        }
+        else if(compare(array[mid], key, check) == 1){
+            first = mid + 1;
+            return binarySearch(array, key, first, last, check);
+        }
+        else if(compare(array[mid], key, check) == 0){
+            // printf("\n*found*\n");
+            // printf("\n%d %d\n", array[mid]->ID, array[mid]->SSN);
+            return array[mid];
+        }
+    }
+    return NULL;
+}
+
+
+void printfDB(Employee** array){
+    for(int i = 0; i < 6; i++){
+        printf("** employee: %d --> id: %d, ssn: %d\n", i + 1, array[i]->ID, array[i]->SSN);
+    }
+}
