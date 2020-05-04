@@ -22,14 +22,14 @@ int main(void){
     filePtr = fopen("students.csv", "r");
 
     Student** myArr = readRecord(filePtr);
-    // for(int i = 0; i < 20; i++){   
-    //     printf("%d %d\n", myArr[i]->age, myArr[i]->ID);
-    // }
+    for(int i = 0; i < 20; i++){   
+        printf("%d %d\n", myArr[i]->age, myArr[i]->ID);
+    }
 
     StudentDB myDB = createDatabase(myArr, 10000);
-    // for(int i = 0; i < 20; i++){   
-    //     printf("** %d %d\n", myDB.array[i]->age, myDB.array[i]->ID);
-    // }
+    for(int i = 0; i < 20; i++){   
+        printf("** %d %d\n", myDB.array[i]->age, myDB.array[i]->ID);
+    }
 
     Student* myStudent = findStudentByID(myDB, 5949605);
     if(myStudent != NULL){
@@ -37,9 +37,42 @@ int main(void){
     }
 
     freeDatabase(myDB);
-    // for(int i = 0; i < 20; i++){   
-    //     printf("** %d %d\n", myDB.array[i]->age, myDB.array[i]->ID);
-    // }
+    for(int i = 0; i < 20; i++){   
+        printf("** %d %d\n", myDB.array[i]->age, myDB.array[i]->ID);
+    }
+
+
+    // FILE* fp = fopen("students.csv","r");    
+    // Student** arr = readRecord(fp);    
+    // if (arr == NULL){        
+    //     printf("Allocation failed\n");        
+    //     return -1;    
+    // } else {        
+    //     printf("Data has been read.\n\n");    
+    // } 
+    // StudentDB myDB = createDatabase(arr,10000);
+    // printf("\n*size: %d, myDB.array[0]->Id: %d myDB.array[5000]->ID: %d, myDB.array[5000]->ID %d myDB.array[9999]->ID: %d\n\n", myDB.sizeOfDB, myDB.array[0]->ID, myDB.array[5000]->ID, myDB.array[5000]->ID, myDB.array[9999]->ID);    
+    // if (myDB.sizeOfDB == 10000 && (myDB.array[0]->ID > myDB.array[5000]->ID) && (myDB.array[5000]->ID > myDB.array[9999]->ID)){
+    //     // ID should be descending        
+    //     printf("createDatabase passed\n\n");    
+    // } else {        
+    //     printf("createDatabase failed\n\n");
+    // }    
+    // Student* temp = findStudentByID(myDB,1514789); // this one doesn't exist    
+    // if (temp == NULL){        
+    //     printf("findStudentByID 1 passed\n\n");    
+    // } else {        
+    //     printf("findStudentByID 1 failed\n\n");    
+    // }    
+    // temp = findStudentByID(myDB,82469843); // this one does exist    
+    // if (temp == NULL){        
+    //     printf("findStudentByID 2 failed\n\n");    
+    // } else {        
+    //     printf("findStudentByID 2 passed\n\n");    
+    // }    
+    // freeDatabase(myDB);    
+    // printf("freeDatabase passed\n\n");    
+    // return 0;
 }
 
 
@@ -94,7 +127,7 @@ Student** readRecord(FILE* fptr){
         array[i]->age = age;
         array[i]->ID = ID;
     }
-
+    printf("%d\n", array[0]->age);  
     return array; // returns an array of pointers of student structs
 }
 

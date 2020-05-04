@@ -1,9 +1,9 @@
 // C program to demonstrate insert operation in binary search tree. 
 #include<stdio.h> 
 #include<stdlib.h> 
+#define COUNT 10
 
-struct node 
-{ 
+struct node{ 
     int key; 
     struct node *left, *right; 
 }; 
@@ -46,6 +46,30 @@ struct node* insert(struct node* node, int key)
     return node; 
 } 
 
+
+// Function to print binary tree in 2D 
+// It does reverse inorder traversal 
+void print2DUtil(struct node *root, int space){ 
+    if (root == NULL) 
+        return; 
+
+    space += COUNT; 
+
+    print2DUtil(root->right, space); 
+  
+    printf("\n"); 
+    for (int i = COUNT; i < space; i++) 
+        printf(" "); 
+    printf("%d\n", root->key); 
+
+    print2DUtil(root->left, space); 
+} 
+
+void print2D(struct node *root) { 
+   print2DUtil(root, 0); 
+}
+
+
 // Driver Program to test above functions 
 int main() 
 { 
@@ -57,16 +81,17 @@ int main()
   20         40   60       80 
 */
     struct node *root = NULL; 
-    root = insert(root, 50); 
-    insert(root, 30); 
-    insert(root, 20); 
-    insert(root, 40); 
-    insert(root, 70); 
-    insert(root, 60); 
-    insert(root, 80); 
+    root = insert(root, 100); 
+    insert(root, 150); 
+    insert(root, 50); 
+    insert(root, 125); 
+    insert(root, 75); 
+    insert(root, 175); 
+    insert(root, 25); 
 
     // print inoder traversal of the BST 
-    inorder(root); 
+    // inorder(root); 
+    print2D(root);
 
     return 0; 
 } 
