@@ -15,30 +15,29 @@ typedef struct binarySearchTree {
 Node* newNode(int key);
 void insertBST(BST* bst, int key);
 BST* findBST(BST* bst, int key);
-void print2DUtil(struct node *root, int space);
-void print2D(struct node *root);
+void print2DUtil(Node* root, int space);
+void print2D(BST* bst);
 
 
 int main(void){
-    BST myBST;
-    myBST.top = NULL;
+    BST* myBST = malloc(sizeof(BST));
+    myBST->top = NULL;
     // Node* top = newNode(10);
-    insertBST(&myBST, 100);
-    insertBST(&myBST, 90);
-    insertBST(&myBST, 80);
-    insertBST(&myBST, 10);
-    insertBST(&myBST, 60);
-    insertBST(&myBST, 50);
-    insertBST(&myBST, 55);
-    insertBST(&myBST, 45);
-    insertBST(&myBST, 1000035);
-    print2D(myBST.top);
+    insertBST(myBST, 100);
+    insertBST(myBST, 90);
+    insertBST(myBST, 80);
+    insertBST(myBST, 10);
+    insertBST(myBST, 60);
+    insertBST(myBST, 50);
+    insertBST(myBST, 55);
+    insertBST(myBST, 45);
+    insertBST(myBST, 1000035);
+    print2D(myBST);
 
-    // BST* newBSTptr = findBST(&myBST, 60);
-    // BST newBST = *newBSTptr;
-    // printf("%d\n", newBST.top->key);
-    // print2D(newBST.top);
-
+    BST* newBSTptr = findBST(myBST, 60);
+    print2D(newBSTptr);
+    
+    printf("done\n");
 }
 
 
@@ -51,12 +50,10 @@ Node* newNode(int key){
 
 
 void insertBST(BST* bst, int key){ 
-    /* If the tree is empty, return a new node */
     if (bst->top == NULL){ 
         bst->top = newNode(key); 
     }
     BST* temp = malloc(sizeof(BST));
-    /* Otherwise, recur down the tree */
     if (key < bst->top->key){
         temp->top = bst->top->left;
         insertBST(temp, key);
@@ -76,21 +73,18 @@ BST* findBST(BST* bst, int key){
         return NULL;
     }
     if(bst->top->key == key){
-        printf("found BST!\n");
-        printf("%d\n", bst->top->key);
+        printf("\n*Found BST!\n");
         return bst;
     }
     BST* temp = malloc(sizeof(BST));
     /* Otherwise, recur down the tree */
     if (key < bst->top->key){
         temp->top = bst->top->left;
-        findBST(temp, key);
-        bst->top->left = temp->top; 
+        return findBST(temp, key);
     }
     else if (key > bst->top->key){
         temp->top = bst->top->right;
-        findBST(temp, key);
-        bst->top->right = temp->top; 
+        return findBST(temp, key);
     }
     return NULL;
 }
@@ -101,12 +95,11 @@ void print2DUtil(Node *root, int space){
 
     space += COUNT; 
     print2DUtil(root->right, space); 
-  
-    //printf("\n"); 
+
     for (int i = COUNT; i < space; i++){ 
         printf(" ");
     }
-    printf("%6d-----|", root->key);  // handles proper formatting for up to 6 digits, change coefficient of %d to accomidate more
+    printf("%6d-----|", root->key);  // handles proper formatting for up to 6 digits, change coefficient of %d to accomidate more       
     if(!root->left && !root->right){
         printf("NULL");
     }
@@ -115,6 +108,10 @@ void print2DUtil(Node *root, int space){
     print2DUtil(root->left, space); 
 } 
 
-void print2D(struct node *root){ 
-   print2DUtil(root, 0); 
+void print2D(BST* bst){ 
+    if(!bst){
+        return;
+    }
+    printf("\n");
+    print2DUtil(bst->top, 0); 
 }
