@@ -1,4 +1,4 @@
-/* provided header 
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,14 +18,14 @@ int comparison(void*,void*);
 Node* insertBST(Node*, Employee*);
 Employee* searchBST(Node*,int);
 void deleteTree(Node*);
-*/
+
 
 // custom functions
 Node* newNode(Employee* employee);
 void print2DUtil(Node *root, int space);
 void print2D(Node* root);
 
-/* testing function 
+
 
 int main(void){
     FILE * filePtr; //creates file pointer
@@ -54,7 +54,7 @@ int main(void){
     printf("\n-------------------------------------------------------------\n\n");
     print2D(root);
 }
-*/
+
 
 // takes file ptr as input
 // error checks file ptr and malloc
