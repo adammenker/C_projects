@@ -1,87 +1,163 @@
 // Adam Menker, Ethan Loftis, Kenny Fatoki
 
+// My algorithm runs O(v * e);
+// for every edge, my array pushes it. This would be O(e+v) but due to the fact that we must also have it in ascending order it runs O(v*e)
+// personally, I am not convinced that it is possible to make push run in constant time for ascending order, and if there is, that is my ignorance. The way I am 
+// viewing it is that even if we knew exactly where the vertex should be placed in the adjacency list, we would still have to traverse the linked list,
+// also to add the vertex exactly where it should go without comparing it to the other vertices in the adjacency list would require we store the values of the
+// list somehow that doesnt require us to traverse the list, which as I understand is not a feature of linked lists. I spent about 10 hours on this assignment 
+// and I am not sure it is worth it to keep trying because I have exhausted every possible path I could think of.
+// The time complexity is found from my main function starting at line ~40 through ~60,
+// since one for loop iterates "vertices" amount of time, and the for loop inside of that iterates "edges" amount of time
+// this causes the time complexity listed above, because for every vertex, I will iterate some functionality "edges" amount 
+// of times, thus O(v * e)
+
+// Furthermore, I do have functions that run O(e) and O(v) but since big O notation does not consider coefficients my time complexity is still O(v*e) instead of O(2e*v)
+// or something like that. tldr: coefficients do not matter
+
+// my algorithm assumes vertex indexing starts at 1 so that the output does not have an empy line for edges connecting to 0
+// I could make minor changes to accomidate for that though, I would simply need to know what the input is and the sample one
+// given starts with indexing from 1
+
 #include <stdio.h>
 #include <stdlib.h>
 
-// My runtime for making the adjacency lists is (Ov+e). I have three relevant loops. The first is in 
-// getNumberOfVerticesAndEdges(), this runs in O(e) time because it reads every edge. the next is in
-// createArrayOfArrays(), this runs in O(v) time because it creates->O(1) an array for each vertex. 
-// Finally, the for loop in my main iterates over every edge and pushes->O(1) so it is O(e). Combined
-// the run time is O(2e+v), and since coefficients are not considered, the algorithm for creating the
-// adjacency lists is O(v+e). To display the lists, I have a nested for loop that iterates for every
-// vertex, so the complexity of this is O(v^2). Although this is in my main, it does not contribute to 
-// the creation of the adjacency lists and is only there to provide a visual representation.
+// created linked list and Node structures
+typedef struct node{
+    int vertexNumber;
+    struct node* next;
+} Node;
 
-// function declarations
+typedef struct linkedList{
+    Node* head;
+    int size;
+} LinkedList;
+
 void getNumberOfVerticesAndEdges(FILE* fp, int* vertices, int* edges);
-void push(int** arrayOfArrays, int firstVertex, int secondVertex);
-int** createArrayOfArrays(int numOfVertices);
-void printAdjacencyLists(int** arrayOfArray, int vertices);
+void push(LinkedList* linkedList, int vertex);
+Node* createNode(int vertexNumber);
+void printAdjacencyLists(LinkedList** arrayOfLinkedLists, int vertices, int edges);
+LinkedList** createLinkedList(int numOfVertices);
+void formatList(LinkedList** array, int vertices);
 
 int main(void){
-    // setting file pointer and error checking
+    // creating the file pointer
     FILE *fptr = fopen("input-machine-problem-1.txt", "r");
     if (fptr == NULL) {
         printf("Error! opening file");
         return 0;
     }
 
-    // defining variables to hold the value of the number of vertices and edges
     int edges;
     int vertices;
     int* edgesPtr = &edges;
     int* verticesPtr = &vertices;
-    getNumberOfVerticesAndEdges(fptr, verticesPtr, edgesPtr);
+    // gets the number of vertices and edges in the file
+    getNumberOfVerticesAndEdges(fptr, verticesPtr, edgesPtr); // O(e)
+    // creating an array of linked lists, each list stores adjacency list for a vertex
+    LinkedList** arrayOfLinkedLists = createLinkedList(vertices);
 
-    // setting file pointer back to the top
+    int x, y;
     if(fptr == NULL){
         return 0;
     }
+    // rewind so that any outside functions (getNumberOfVerticesAndEdges for example) reading file do not move 
+    // the pointer to a spot that will affect the algorithm belowe
     rewind(fptr);
-
-    // creating an array of arrays
-    int** arrayOfArrays = createArrayOfArrays(vertices);
-
-    // form 36 - 43 I read an edge and push one vertex to the others adjacency list and vice versa
-    int x, y;
+    // looping for every vertice, scan and push each edge causing O(v * e) time complexity
     for(int i = 0; i < edges; i++){
+        // read each edge from the file
         if(feof(fptr)){
             return 0;
         }
         fscanf (fptr, "%d %d", &x, &y);  
-        push(arrayOfArrays, x, y);
-        push(arrayOfArrays, y, x);
+        push(arrayOfLinkedLists[x - 1], y);
+        push(arrayOfLinkedLists[y - 1], x);
     }
-    // print the lists
-    printAdjacencyLists(arrayOfArrays, vertices);
-    // close the file
+
+    // implementation makes use of setting a temp node to each linked list initialized so funciton below removes that temp node
+    formatList(arrayOfLinkedLists, vertices);
+    // prints adjacency lists in readable format
+    printAdjacencyLists(arrayOfLinkedLists, vertices, edges);
+    // closes file
     fclose(fptr); 
 }
 
-// insert secondVertex in firstVertex's list
-void push(int** arrayOfArrays, int firstVertex, int secondVertex){
-    arrayOfArrays[firstVertex - 1][secondVertex - 1] = secondVertex;
+// O(v)
+// input array of LinkedLists, and int value for a new nodes vertex that is being pushed
+void push(LinkedList* linkedList, int vertex){
+    // creates new node with input int
+    Node* newNode = createNode(vertex);
+    // functionality below creates a pointer that will traverse the linked list, moving the new node over 1 position
+    // until it finds a node that is greater than the new node, so new node will be node right before the first 
+    // one greater than it
+    Node temp;
+    Node* cur = &temp;
+    temp.next = linkedList->head;
+
+    while(cur->next != NULL && cur->next->vertexNumber < newNode->vertexNumber){
+        cur = cur->next;
+    }
+    if(cur->next->vertexNumber == newNode->vertexNumber){
+        return;
+    }
+    newNode->next = cur->next;
+    cur->next = newNode;
+    linkedList->head = temp.next;
 }
 
-// create an array of arrays structure
-int** createArrayOfArrays(int numOfVertices){
-    int** array = malloc(sizeof(int*) * numOfVertices);
+// removes place holder node
+// O(v*e) preserves the time complexity, this is somewhat innefficient, but does not effect the overall time complexity since my solution will run at O(v*e) 
+// regardless of whether I do not implement it this way
+void formatList(LinkedList** array, int vertices){
+    for(int i = 0;i < vertices; i++){
+        Node* temp = array[i]->head;
+        Node* prev = temp;
+        while(temp->next != NULL){
+            prev = temp;
+            temp = temp->next;
+        }
+        prev->next = NULL;
+    }
+}
+
+// creates array of linked lists and initializes each list with a temp/place holder node
+LinkedList** createLinkedList(int numOfVertices){
+    LinkedList** array = malloc(sizeof(LinkedList) * numOfVertices);
     for(int i = 0; i < numOfVertices; i++){
-        int* newArray = malloc(sizeof(int) * numOfVertices);
-        array[i] = newArray;
+        LinkedList* newLinkedList = malloc(sizeof(LinkedList));
+        Node* temp = createNode(99);
+        newLinkedList->head = temp;
+        array[i] = newLinkedList;
     }
     return array;
 }
 
+// allocates memory for a node and sets its vetex int value
+Node* createNode(int vertexNumber){
+    Node* newNode = malloc(sizeof(Node));
+    if(!newNode){
+        return NULL;
+    }
+    newNode->vertexNumber = 0;
+    newNode->next = NULL;
+    newNode->vertexNumber = vertexNumber;
+
+    return newNode;
+}
+
 // scans through file and looks for greatest int and increments int holding num of edges for every new line of ints read
+// O(e), since it iterates through the input file 
 void getNumberOfVerticesAndEdges(FILE* fp, int* vertices, int* edges){
+    int x, y;
+    
     if (fp == NULL) {
         printf("Error! opening file");
         return;
     } 
+
     *vertices = 0;
     *edges = 0;
-    int x, y;
     while (fscanf(fp, "%d %d", &x, &y) == 2) {
         if(x > *vertices){
             *vertices = x;
@@ -93,16 +169,23 @@ void getNumberOfVerticesAndEdges(FILE* fp, int* vertices, int* edges){
     }
 }
 
-// prints each vertex in the order of the indexes such that it appears ascending
-void printAdjacencyLists(int** arrayOfArray, int vertices){
+// traverses each linked list and prints its vertices value
+// O(v*e) for every vertex print all edges so O(v*e) --> which would be the worst case in which every vertex had an edge to every other vertex so avg run time is 
+// slightly quicker, but not really relevant bc we do not know what the graph looks like
+void printAdjacencyLists(LinkedList** arrayOfLinkedLists, int vertices, int edges){
     for(int i = 0; i < vertices; i++){
-        printf("%d: ", i + 1);
-        for(int j = 0; j < vertices; j++){
-            if(arrayOfArray[i][j] != 0){
-                printf("%d, ", arrayOfArray[i][j]);
-            }
+        printf("%d:  ", i + 1);
+        if(arrayOfLinkedLists[i]->head == NULL){
+            return;
         }
-        printf("\n");
+        Node* cur = arrayOfLinkedLists[i]->head;
+
+        while(cur != NULL){
+            printf("%d --> ", cur->vertexNumber);
+            cur = cur->next;
+        }
+        printf("NULL\n");
+        free(cur);
     }
 }
 
